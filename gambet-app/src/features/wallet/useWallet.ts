@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { WalletState, WalletActions } from './types';
+import { CHILIZ_SPICY_CONFIG, CHILIZ_MAINNET_CONFIG } from '../chiliz/config';
 
 export const useWallet = (): WalletState & WalletActions => {
   const [state, setState] = useState<WalletState>({
@@ -7,9 +8,33 @@ export const useWallet = (): WalletState & WalletActions => {
     address: null,
     chainId: null,
     balance: null,
+    balanceFormatted: null,
+    currencySymbol: null,
     isConnecting: false,
     error: null,
   });
+
+  const getCurrencyInfo = useCallback((chainId: number) => {
+    if (chainId === CHILIZ_SPICY_CONFIG.chainId || chainId === CHILIZ_MAINNET_CONFIG.chainId) {
+      return {
+        symbol: 'CHZ',
+        decimals: 18,
+        name: 'Chiliz'
+      };
+    }
+    // Por defecto asumimos ETH
+    return {
+      symbol: 'ETH',
+      decimals: 18,
+      name: 'Ethereum'
+    };
+  }, []);
+
+  const formatBalance = useCallback((balance: string, decimals: number) => {
+    const balanceInWei = parseInt(balance, 16);
+    const balanceInTokens = balanceInWei / Math.pow(10, decimals);
+    return balanceInTokens.toFixed(4);
+  }, []);
 
   const connect = useCallback(async () => {
     try {
@@ -36,11 +61,17 @@ export const useWallet = (): WalletState & WalletActions => {
         params: [account, 'latest'],
       });
 
+      const chainIdNumber = parseInt(chainId, 16);
+      const currencyInfo = getCurrencyInfo(chainIdNumber);
+      const balanceFormatted = formatBalance(balance, currencyInfo.decimals);
+
       setState({
         isConnected: true,
         address: account,
-        chainId: parseInt(chainId, 16),
+        chainId: chainIdNumber,
         balance: balance,
+        balanceFormatted: balanceFormatted,
+        currencySymbol: currencyInfo.symbol,
         isConnecting: false,
         error: null,
       });
@@ -51,7 +82,7 @@ export const useWallet = (): WalletState & WalletActions => {
         error: error instanceof Error ? error.message : 'Error desconocido',
       }));
     }
-  }, []);
+  }, [getCurrencyInfo, formatBalance]);
 
   const disconnect = useCallback(() => {
     setState({
@@ -59,6 +90,8 @@ export const useWallet = (): WalletState & WalletActions => {
       address: null,
       chainId: null,
       balance: null,
+      balanceFormatted: null,
+      currencySymbol: null,
       isConnecting: false,
       error: null,
     });
@@ -81,6 +114,50 @@ export const useWallet = (): WalletState & WalletActions => {
       }));
     }
   }, []);
+
+  // Escuchar cambios de red y actualizar balance
+  useEffect(() => {
+    if (!window.ethereum || !state.address) return;
+
+    const handleChainChanged = async (chainId: string) => {
+      const chainIdNumber = parseInt(chainId, 16);
+      const currencyInfo = getCurrencyInfo(chainIdNumber);
+      
+      try {
+        const balance = await window.ethereum!.request({
+          method: 'eth_getBalance',
+          params: [state.address, 'latest'],
+        });
+        
+        const balanceFormatted = formatBalance(balance, currencyInfo.decimals);
+        
+        setState(prev => ({
+          ...prev,
+          chainId: chainIdNumber,
+          balance: balance,
+          balanceFormatted: balanceFormatted,
+          currencySymbol: currencyInfo.symbol,
+        }));
+      } catch (error) {
+        console.error('Error al obtener balance:', error);
+      }
+    };
+
+    const handleAccountsChanged = () => {
+      // Recargar la página cuando cambien las cuentas
+      window.location.reload();
+    };
+
+    window.ethereum.on('chainChanged', handleChainChanged);
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      }
+    };
+  }, [state.address, getCurrencyInfo, formatBalance]);
 
   return {
     ...state,

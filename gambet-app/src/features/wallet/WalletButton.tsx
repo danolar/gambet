@@ -5,7 +5,8 @@ export const WalletButton: React.FC = () => {
   const { 
     isConnected, 
     address, 
-    balance, 
+    balanceFormatted, 
+    currencySymbol,
     isConnecting, 
     error, 
     connect, 
@@ -16,17 +17,12 @@ export const WalletButton: React.FC = () => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
-  const formatBalance = (bal: string) => {
-    const eth = parseInt(bal, 16) / 1e18;
-    return eth.toFixed(4);
-  };
-
   if (isConnected) {
     return (
       <div className="flex items-center space-x-3">
         <div className="text-right">
           <div className="text-sm text-gray-300">
-            {formatBalance(balance || '0')} ETH
+            {balanceFormatted} {currencySymbol}
           </div>
           <div className="text-xs text-gray-400">
             {formatAddress(address || '')}

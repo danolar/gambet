@@ -3,6 +3,8 @@ export interface WalletState {
   address: string | null;
   chainId: number | null;
   balance: string | null;
+  balanceFormatted: string | null;
+  currencySymbol: string | null;
   isConnecting: boolean;
   error: string | null;
 }
