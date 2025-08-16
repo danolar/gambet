@@ -1,11 +1,14 @@
-import React from 'react';
+import { WalletButton } from './features/wallet';
 import './App.css';
 
 function App() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <header className="bg-gray-800 p-4">
-        <h1 className="text-2xl font-bold text-center">🎲 Gambet Vision</h1>
+        <div className="max-w-4xl mx-auto flex justify-between items-center">
+          <h1 className="text-2xl font-bold">🎲 Gambet Vision</h1>
+          <WalletButton />
+        </div>
       </header>
       
       <main className="p-8">
