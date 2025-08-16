@@ -1,5 +1,5 @@
 import { WalletButton } from './features/wallet';
-import { NetworkSelector } from './features/chiliz';
+import { NetworkSelectorCompact } from './features/chiliz';
 import './App.css';
 
 function App() {
@@ -8,7 +8,10 @@ function App() {
       <header className="bg-gray-800 p-4">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold">🎲 Gambet Vision</h1>
-          <WalletButton />
+          <div className="flex items-center space-x-4">
+            <NetworkSelectorCompact />
+            <WalletButton />
+          </div>
         </div>
       </header>
       
@@ -17,11 +20,6 @@ function App() {
           <h2 className="text-3xl font-bold mb-8 text-center">
             🔮 Feed de Visiones
           </h2>
-          
-          {/* Selector de Red Chiliz */}
-          <div className="mb-8">
-            <NetworkSelector />
-          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Tarjeta de ejemplo simple */}
