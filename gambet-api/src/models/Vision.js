@@ -85,12 +85,27 @@ export class Vision {
 
     const { title, description, category, odds, image_url, creator_address, network } = visionData;
     
+    // Validate required fields
+    if (!title || !category) {
+      throw new Error('Title and category are required');
+    }
+
+    // Validate odds
+    if (odds && (odds <= 0 || odds > 100)) {
+      throw new Error('Odds must be between 0 and 100');
+    }
+
+    // Validate image_url format
+    if (image_url && !image_url.startsWith('http')) {
+      throw new Error('Image URL must be a valid HTTP/HTTPS URL');
+    }
+    
     try {
       const result = await Vision.pool.query(
         `INSERT INTO visions (title, description, category, odds, image_url, creator_address, network)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING *`,
-        [title, description, category, odds, image_url, creator_address, network]
+        [title, description, category, odds || null, image_url || null, creator_address || 'Anonymous', network || 'Chiliz']
       );
       return result.rows[0];
     } catch (error) {

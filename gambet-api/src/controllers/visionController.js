@@ -56,11 +56,38 @@ export const visionController = {
       if (!visionData.title || !visionData.category) {
         return res.status(400).json({
           success: false,
-          error: 'Title and category are required'
+          error: 'Validation error',
+          message: 'Title and category are required'
         });
       }
 
-      const newVision = await Vision.create(visionData);
+      // Validate odds if provided
+      if (visionData.odds && (visionData.odds <= 0 || visionData.odds > 100)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Validation error',
+          message: 'Odds must be between 0 and 100'
+        });
+      }
+
+      // Validate image_url if provided
+      if (visionData.image_url && !visionData.image_url.startsWith('http')) {
+        return res.status(400).json({
+          success: false,
+          error: 'Validation error',
+          message: 'Image URL must be a valid HTTP/HTTPS URL'
+        });
+      }
+
+      // Set default values
+      const visionToCreate = {
+        ...visionData,
+        creator_address: visionData.creator_address || 'Anonymous',
+        network: visionData.network || 'Chiliz',
+        status: 'active'
+      };
+
+      const newVision = await Vision.create(visionToCreate);
       
       res.status(201).json({
         success: true,

@@ -1,14 +1,41 @@
 import { useState } from 'react';
 import { AIAgentChat } from '../features/ai/AIAgentChat';
+import { useVisions } from '../hooks/useVisions';
 import type { AIGeneratedBettingEvent } from '../features/ai/openaiService';
 
 export function FloatingAIAgent() {
   const [isOpen, setIsOpen] = useState(false);
+  const { createVision } = useVisions();
 
-  const handleBettingEventCreated = (event: AIGeneratedBettingEvent & { imageUrl: string }) => {
-    console.log('New bet created:', event);
-    setIsOpen(false);
-    // TODO: Implement logic to add bet to feed
+  const handleBettingEventCreated = async (event: AIGeneratedBettingEvent & { imageUrl: string }) => {
+    try {
+      console.log('New bet created by AI:', event);
+      
+      // Create vision data from AI generated event
+      const visionData = {
+        title: event.title,
+        description: event.description,
+        category: event.category,
+        odds: event.initialOdds,
+        image_url: event.imageUrl,
+        creator_address: 'AI Generated', // You can change this to actual user address
+        network: 'Chiliz'
+      };
+
+      // Save to database using the hook
+      const newVision = await createVision(visionData);
+      console.log('Vision saved to database:', newVision);
+      
+      // Close the modal
+      setIsOpen(false);
+      
+      // Show success message (you can add a toast notification here)
+      alert('Prediction created and published successfully!');
+      
+    } catch (error) {
+      console.error('Error saving AI generated vision:', error);
+      alert('Error saving prediction. Please try again.');
+    }
   };
 
   return (

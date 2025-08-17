@@ -27,9 +27,63 @@ export const useVisions = () => {
     try {
       setError(null);
       const newVision = await apiService.createVision(visionData);
+      
+      // Add new vision to the beginning of the list
       setVisions(prev => [newVision, ...prev]);
+      
+      // Return the new vision for further processing
       return newVision;
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create vision';
+      setError(errorMessage);
+      console.error('Error creating vision:', err);
+      throw err;
+    }
+  }, []);
+
+  // Refresh visions (useful for real-time updates)
+  const refreshVisions = useCallback(async () => {
+    try {
+      setError(null);
+      const data = await apiService.getVisions();
+      setVisions(data);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to refresh visions';
+      setError(errorMessage);
+      console.error('Error refreshing visions:', err);
+    }
+  }, []);
+
+  // Optimistic update for better UX
+  const optimisticCreateVision = useCallback(async (visionData: CreateVisionData) => {
+    try {
+      setError(null);
+      
+      // Create optimistic vision with temporary ID
+      const optimisticVision: Vision = {
+        id: Date.now(), // Temporary ID
+        ...visionData,
+        status: 'active',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      // Add optimistic vision immediately
+      setVisions(prev => [optimisticVision, ...prev]);
+      
+      // Actually create the vision
+      const newVision = await apiService.createVision(visionData);
+      
+      // Replace optimistic vision with real one
+      setVisions(prev => prev.map(vision => 
+        vision.id === optimisticVision.id ? newVision : vision
+      ));
+      
+      return newVision;
+    } catch (err) {
+      // Remove optimistic vision on error
+      setVisions(prev => prev.filter(vision => vision.id !== Date.now()));
+      
       const errorMessage = err instanceof Error ? err.message : 'Failed to create vision';
       setError(errorMessage);
       console.error('Error creating vision:', err);
@@ -114,10 +168,12 @@ export const useVisions = () => {
     error,
     fetchVisions,
     createVision,
+    optimisticCreateVision,
     updateVision,
     deleteVision,
     getVisionsByCategory,
     getVisionsByCreator,
+    refreshVisions,
     clearError,
   };
 };

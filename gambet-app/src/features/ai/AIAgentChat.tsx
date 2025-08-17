@@ -280,13 +280,13 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
                       onClick={handlePublishAndBet}
                       className="flex-1 bg-gradient-to-r from-[#8fef70] to-[#131549] text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
                     >
-                      Bet and Publish
+                      Publish and Bet
                     </button>
                     <button
                       onClick={handlePublishOnly}
                       className="flex-1 bg-white/10 text-white py-3 px-6 rounded-xl font-semibold border border-[#8fef70]/30 hover:bg-[#8fef70]/20 transition-all duration-300"
                     >
-                      Publish Only
+                      Stake and Publish
                     </button>
                   </div>
                 </div>
