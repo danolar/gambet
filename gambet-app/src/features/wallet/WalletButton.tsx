@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useWallet } from './useWallet';
 
 export const WalletButton: React.FC = () => {
@@ -12,6 +12,19 @@ export const WalletButton: React.FC = () => {
     connect, 
     disconnect 
   } = useWallet();
+
+  // Debug logs
+  useEffect(() => {
+    console.log('WalletButton - State:', {
+      isConnected,
+      address,
+      balanceFormatted,
+      currencySymbol,
+      isConnecting,
+      error,
+      hasEthereum: typeof window !== 'undefined' && !!window.ethereum
+    });
+  }, [isConnected, address, balanceFormatted, currencySymbol, isConnecting, error]);
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;

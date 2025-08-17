@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:3001/api';
+import { ENV_CONFIG } from '../config/env';
+
+const API_BASE_URL = ENV_CONFIG.API_BASE_URL;
 
 export interface Vision {
   id: number;

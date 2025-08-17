@@ -12,7 +12,8 @@ function App() {
   const { networkName, isSpicyTestnet, isMainnet, currentChainId } = useChilizNetwork();
 
   // Debug logs
-  console.log('Network Debug:', { networkName, isSpicyTestnet, isMainnet, currentChainId });
+  console.log('App - Network Debug:', { networkName, isSpicyTestnet, isMainnet, currentChainId });
+  console.log('App - Ethereum provider available:', typeof window !== 'undefined' && !!window.ethereum);
 
   // Determinar el icono basado en la red
   const getNetworkIcon = () => {

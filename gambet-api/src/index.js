@@ -30,7 +30,20 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? [
+        process.env.ALLOWED_ORIGINS?.split(',') || [],
+        'https://gambet.danolar.xyz', // Tu dominio actual
+        'https://www.gambet.danolar.xyz', // Con www también
+        'http://localhost:5173', // Para desarrollo local
+        'http://localhost:5174' // Puerto alternativo de desarrollo
+      ].filter(Boolean)
+    : true, // En desarrollo permite todos los orígenes
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Database connection with proper Neon SSL configuration

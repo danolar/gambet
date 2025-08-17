@@ -2,13 +2,23 @@ import { useVisions } from '../hooks/useVisions';
 import { useWallet } from '../features/wallet/useWallet';
 import type { Vision } from '../services/api';
 import { BetModal } from './BetModal';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function FeaturedVisions() {
   const { visions, loading, error } = useVisions();
-  const { isConnected } = useWallet();
+  const { isConnected, address, chainId } = useWallet();
   const [selectedVision, setSelectedVision] = useState<Vision | null>(null);
   const [isBetModalOpen, setIsBetModalOpen] = useState(false);
+
+  // Debug logs para verificar el estado de la billetera
+  useEffect(() => {
+    console.log('FeaturedVisions - Wallet State:', {
+      isConnected,
+      address,
+      chainId,
+      hasEthereum: typeof window !== 'undefined' && !!window.ethereum
+    });
+  }, [isConnected, address, chainId]);
 
   if (loading) {
     return (
@@ -269,7 +279,16 @@ export function FeaturedVisions() {
                   }`}
                   style={{ cursor: isConnected ? 'pointer' : 'not-allowed' }}
                 >
-                  {isConnected ? 'Bet Now' : 'Connect Wallet to Bet'}
+                  {isConnected ? (
+                    <span>Bet Now</span>
+                  ) : (
+                    <span>
+                      {typeof window !== 'undefined' && window.ethereum 
+                        ? 'Connect Wallet to Bet' 
+                        : 'Install MetaMask to Bet'
+                      }
+                    </span>
+                  )}
                 </button>
               </div>
               

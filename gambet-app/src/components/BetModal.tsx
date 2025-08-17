@@ -71,15 +71,15 @@ export function BetModal({ isOpen, onClose, vision }: BetModalProps) {
         <div className="mb-6 p-4 bg-[#131549]/50 rounded-xl border border-[#8fef70]/20">
           <div className="flex items-center space-x-3 mb-3">
             <img 
-              src={vision.image_url || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center"} 
+              src={vision.image_data || vision.image_url || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center"} 
               alt={vision.title}
-              className="w-12 h-12 rounded-lg object-cover"
+              className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
             />
-            <div className="flex-1">
-              <h3 className="text-white font-semibold line-clamp-2">{vision.title}</h3>
-              <p className="text-[#8fef70] text-sm">{vision.category}</p>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-white font-semibold line-clamp-2 text-sm">{vision.title}</h3>
+              <p className="text-[#8fef70] text-xs">{vision.category}</p>
             </div>
-            <div className="bg-[#8fef70] text-[#131549] px-3 py-1 rounded-full text-sm font-bold">
+            <div className="bg-[#8fef70] text-[#131549] px-3 py-1 rounded-full text-sm font-bold flex-shrink-0">
               {vision.odds}x
             </div>
           </div>
