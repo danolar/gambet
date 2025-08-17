@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { AIAgentChat } from '../features/ai/AIAgentChat';
 import type { AIGeneratedBettingEvent } from '../features/ai/openaiService';
 

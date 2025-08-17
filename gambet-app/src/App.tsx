@@ -1,11 +1,10 @@
-import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
-import './App.css';
 import { HeroSection, FeaturedVisions, TopCreators, FloatingAIAgent } from './components';
 import { WalletButton } from './features/wallet/WalletButton';
 import { useChilizNetwork } from './features/chiliz/useChilizNetwork';
+import './App.css';
 
 const queryClient = new QueryClient();
 
@@ -30,7 +29,7 @@ function App() {
           {/* Navigation */}
           <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
             <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-4">
                 <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
                   <svg className="w-5 h-5 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z"/>

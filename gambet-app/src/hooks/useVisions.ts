@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { apiService, Vision, CreateVisionData } from '../services/api';
+import { apiService } from '../services/api';
+import type { Vision, CreateVisionData } from '../services/api';
 
 export const useVisions = () => {
   const [visions, setVisions] = useState<Vision[]>([]);
@@ -48,7 +49,7 @@ export const useVisions = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update vision';
       setError(errorMessage);
-      console.error('Error updating vision:', err);
+      console.error('Error creating vision:', err);
       throw err;
     }
   }, []);
