@@ -1,22 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import './App.css';
-import { HeroSection, FeaturedVisions, TopCreators } from './components';
-import { AIAgentChat } from './features/ai/AIAgentChat';
+import { HeroSection, FeaturedVisions, TopCreators, FloatingAIAgent } from './components';
 import { WalletButton } from './features/wallet/WalletButton';
-import type { AIGeneratedBettingEvent } from './features/ai/openaiService';
+import { useChilizNetwork } from './features/chiliz/useChilizNetwork';
 
 const queryClient = new QueryClient();
 
 function App() {
-  const [isAIAgentOpen, setIsAIAgentOpen] = useState(false);
+  const { networkName, isSpicyTestnet, isMainnet, currentChainId } = useChilizNetwork();
 
-  const handleBettingEventCreated = (event: AIGeneratedBettingEvent & { imageUrl: string }) => {
-    console.log('New bet created:', event);
-    setIsAIAgentOpen(false);
-    // TODO: Implement logic to add bet to feed
+  // Debug logs
+  console.log('Network Debug:', { networkName, isSpicyTestnet, isMainnet, currentChainId });
+
+  // Determinar el icono basado en la red
+  const getNetworkIcon = () => {
+    if (isSpicyTestnet) return '🌶️';
+    if (isMainnet) return '🔥';
+    if (currentChainId) return '🔗';
+    return '🌐';
   };
 
   return (
@@ -44,12 +48,15 @@ function App() {
                 <a href="#creators" className="text-muted-foreground hover:text-foreground transition-colors">
                   Creators
                 </a>
-                <button 
-                  onClick={() => setIsAIAgentOpen(true)}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  AI Agent
-                </button>
+                
+                {/* Network Info */}
+                <div className="flex items-center space-x-2 px-3 py-2 bg-[#131549] rounded-lg border border-[#8fef70]/30">
+                  <span className="text-[#8fef70] text-lg">{getNetworkIcon()}</span>
+                  <span className="text-white text-sm font-medium">
+                    {networkName || 'Loading...'}
+                  </span>
+                </div>
+                
                 <WalletButton />
               </div>
             </div>
@@ -89,12 +96,8 @@ function App() {
             </div>
           </footer>
 
-          {/* AI Agent Chat */}
-          <AIAgentChat 
-            isOpen={isAIAgentOpen}
-            onClose={() => setIsAIAgentOpen(false)}
-            onBettingEventCreated={handleBettingEventCreated}
-          />
+          {/* Floating AI Agent Button */}
+          <FloatingAIAgent />
           
           <Toaster />
         </div>

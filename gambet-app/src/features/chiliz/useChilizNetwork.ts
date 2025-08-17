@@ -10,13 +10,18 @@ export interface ChilizNetworkState {
   blockExplorerUrl: string;
 }
 
+interface EthereumError {
+  code: number;
+  message: string;
+}
+
 export const useChilizNetwork = () => {
   const [networkState, setNetworkState] = useState<ChilizNetworkState>({
     currentChainId: null,
     isChilizNetwork: false,
     isSpicyTestnet: false,
     isMainnet: false,
-    networkName: '',
+    networkName: 'Not Connected',
     blockExplorerUrl: '',
   });
 
@@ -25,7 +30,7 @@ export const useChilizNetwork = () => {
     const isMainnet = chainId === CHILIZ_MAINNET_CONFIG.chainId;
     const isChilizNetwork = isSpicyTestnet || isMainnet;
 
-    let networkName = 'Red Desconocida';
+    let networkName = 'Unknown Network';
     let blockExplorerUrl = '';
 
     if (isSpicyTestnet) {
@@ -47,8 +52,8 @@ export const useChilizNetwork = () => {
   }, []);
 
   const switchToSpicyTestnet = useCallback(async () => {
-    if (!window.ethereum) {
-      throw new Error('MetaMask no está instalado');
+    if (typeof window === 'undefined' || !window.ethereum) {
+      throw new Error('MetaMask is not installed');
     }
 
     try {
@@ -56,9 +61,10 @@ export const useChilizNetwork = () => {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: `0x${CHILIZ_SPICY_CONFIG.chainId.toString(16)}` }],
       });
-    } catch (switchError: any) {
-      // Si la red no existe, la agregamos
-      if (switchError.code === 4902) {
+    } catch (switchError: unknown) {
+      const error = switchError as EthereumError;
+      // If the network doesn't exist, add it
+      if (error.code === 4902) {
         try {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
@@ -72,8 +78,8 @@ export const useChilizNetwork = () => {
               },
             ],
           });
-        } catch (addError) {
-          throw new Error('Error al agregar la red Chiliz Spicy Testnet');
+        } catch {
+          throw new Error('Error adding Chiliz Spicy Testnet');
         }
       } else {
         throw switchError;
@@ -82,8 +88,8 @@ export const useChilizNetwork = () => {
   }, []);
 
   const switchToMainnet = useCallback(async () => {
-    if (!window.ethereum) {
-      throw new Error('MetaMask no está instalado');
+    if (typeof window === 'undefined' || !window.ethereum) {
+      throw new Error('MetaMask is not installed');
     }
 
     try {
@@ -91,8 +97,9 @@ export const useChilizNetwork = () => {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: `0x${CHILIZ_MAINNET_CONFIG.chainId.toString(16)}` }],
       });
-    } catch (switchError: any) {
-      if (switchError.code === 4902) {
+    } catch (switchError: unknown) {
+      const error = switchError as EthereumError;
+      if (error.code === 4902) {
         try {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
@@ -106,8 +113,8 @@ export const useChilizNetwork = () => {
               },
             ],
           });
-        } catch (addError) {
-          throw new Error('Error al agregar la red Chiliz Mainnet');
+        } catch {
+          throw new Error('Error adding Chiliz Mainnet');
         }
       } else {
         throw switchError;
@@ -115,30 +122,74 @@ export const useChilizNetwork = () => {
     }
   }, []);
 
-  // Escuchar cambios de red
+  // Listen for network changes
   useEffect(() => {
-    if (!window.ethereum) return;
+    if (typeof window === 'undefined' || !window.ethereum) {
+      console.log('MetaMask not available');
+      return;
+    }
+
+    const ethereum = window.ethereum;
 
     const handleChainChanged = (chainId: string) => {
+      console.log('Chain changed to:', chainId);
       updateNetworkState(parseInt(chainId, 16));
     };
 
     const handleAccountsChanged = () => {
-      // Recargar la página cuando cambien las cuentas
+      console.log('Accounts changed, reloading page');
       window.location.reload();
     };
 
-    window.ethereum.on('chainChanged', handleChainChanged);
-    window.ethereum.on('accountsChanged', handleAccountsChanged);
+    const handleConnect = () => {
+      console.log('Wallet connected');
+      // Get current chain ID when wallet connects
+      ethereum.request({ method: 'eth_chainId' }).then((chainId: string) => {
+        console.log('Current chain ID:', chainId);
+        updateNetworkState(parseInt(chainId, 16));
+      }).catch(console.error);
+    };
 
-    // Obtener el chainId actual
-    window.ethereum.request({ method: 'eth_chainId' }).then((chainId: string) => {
+    const handleDisconnect = () => {
+      console.log('Wallet disconnected');
+      setNetworkState({
+        currentChainId: null,
+        isChilizNetwork: false,
+        isSpicyTestnet: false,
+        isMainnet: false,
+        networkName: 'Not Connected',
+        blockExplorerUrl: '',
+      });
+    };
+
+    // Add event listeners
+    ethereum.on('chainChanged', handleChainChanged);
+    ethereum.on('accountsChanged', handleAccountsChanged);
+    ethereum.on('connect', handleConnect);
+    ethereum.on('disconnect', handleDisconnect);
+
+    // Get current chain ID
+    ethereum.request({ method: 'eth_chainId' }).then((chainId: string) => {
+      console.log('Initial chain ID:', chainId);
       updateNetworkState(parseInt(chainId, 16));
+    }).catch((error) => {
+      console.error('Error getting chain ID:', error);
+      // Set default state if there's an error
+      setNetworkState({
+        currentChainId: null,
+        isChilizNetwork: false,
+        isSpicyTestnet: false,
+        isMainnet: false,
+        networkName: 'Not Connected',
+        blockExplorerUrl: '',
+      });
     });
 
     return () => {
-      window.ethereum?.removeListener('chainChanged', handleChainChanged);
-      window.ethereum?.removeListener('accountsChanged', handleAccountsChanged);
+      ethereum.removeListener('chainChanged', handleChainChanged);
+      ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      ethereum.removeListener('connect', handleConnect);
+      ethereum.removeListener('disconnect', handleDisconnect);
     };
   }, [updateNetworkState]);
 

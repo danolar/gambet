@@ -140,31 +140,45 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 rounded-lg w-full max-w-2xl h-[600px] flex flex-col">
+      <div className="bg-[#131549] rounded-2xl w-full max-w-2xl h-[600px] flex flex-col border-2 border-[#8fef70]/30 shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
-          <h3 className="text-lg font-semibold">🤖 AI Agent - Gambet Vision</h3>
+        <div className="flex items-center justify-between p-6 border-b border-[#8fef70]/30 bg-gradient-to-r from-[#8fef70]/10 to-[#131549]">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-[#8fef70] to-[#131549] rounded-lg flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-white">AI Agent - Gambet Vision</h3>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white"
+            className="text-[#8fef70] hover:text-white transition-colors p-2 rounded-lg hover:bg-[#8fef70]/20"
           >
-            ✕
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
           </button>
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {currentStep === 'chat' && (
             <>
               {/* Welcome message */}
               {messages.length === 0 && (
-                <div className="text-center text-gray-400">
-                  <div className="text-4xl mb-2">🤖</div>
-                  <p>Hello! I'm your AI assistant for betting.</p>
-                  <p className="text-sm mt-2">
+                <div className="text-center text-white">
+                  <div className="w-16 h-16 bg-gradient-to-r from-[#8fef70] to-[#131549] rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <p className="text-lg font-semibold mb-2">Welcome to Gambet Vision!</p>
+                  <p className="text-[#8fef70] mb-4">I'm your AI assistant for creating predictions.</p>
+                  <p className="text-sm text-gray-300 mb-2">
                     Tell me what you want to bet on in natural language, for example:
                   </p>
-                  <p className="text-sm text-blue-400 mt-1">
+                  <p className="text-sm text-[#8fef70] font-medium">
                     "I think team X will win with more than 2 goals"
                   </p>
                 </div>
@@ -177,10 +191,10 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
                       message.role === 'user'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-700 text-gray-200'
+                        ? 'bg-[#8fef70] text-[#131549] font-medium'
+                        : 'bg-white/10 text-white border border-[#8fef70]/30'
                     }`}
                   >
                     {message.content}
@@ -191,11 +205,11 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
               {/* Loading indicator */}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-gray-700 text-gray-200 px-4 py-2 rounded-lg">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="bg-white/10 text-white px-4 py-3 rounded-2xl border border-[#8fef70]/30">
+                    <div className="flex space-x-2">
+                      <div className="w-2 h-2 bg-[#8fef70] rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-[#8fef70] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-[#8fef70] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                   </div>
                 </div>
@@ -206,9 +220,9 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
           {/* Bet creation step */}
           {currentStep === 'creating' && generatedEvent && (
             <div className="space-y-4">
-              <div className="bg-blue-900 bg-opacity-20 border border-blue-500 rounded-lg p-4">
-                <h4 className="text-lg font-semibold text-blue-400 mb-2">📝 Generated Bet</h4>
-                <div className="space-y-2">
+              <div className="bg-[#8fef70]/10 border-2 border-[#8fef70]/30 rounded-xl p-6">
+                <h4 className="text-lg font-bold text-[#8fef70] mb-4">Generated Bet</h4>
+                <div className="space-y-3 text-white">
                   <p><strong>Title:</strong> {generatedEvent.title}</p>
                   <p><strong>Description:</strong> {generatedEvent.description}</p>
                   <p><strong>Category:</strong> {generatedEvent.category}</p>
@@ -219,9 +233,9 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
               
               <button
                 onClick={handleGenerateImage}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg"
+                className="w-full bg-gradient-to-r from-[#8fef70] to-[#131549] text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
               >
-                🎨 Generate Representative Image
+                Generate Representative Image
               </button>
             </div>
           )}
@@ -229,9 +243,9 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
           {/* Image generation step */}
           {currentStep === 'image-generation' && generatedEvent && (
             <div className="space-y-4">
-              <div className="bg-blue-900 bg-opacity-20 border border-blue-500 rounded-lg p-4">
-                <h4 className="text-lg font-semibold text-blue-400 mb-2">📝 Generated Bet</h4>
-                <div className="space-y-2">
+              <div className="bg-[#8fef70]/10 border-2 border-[#8fef70]/30 rounded-xl p-6">
+                <h4 className="text-lg font-bold text-[#8fef70] mb-4">Generated Bet</h4>
+                <div className="space-y-3 text-white">
                   <p><strong>Title:</strong> {generatedEvent.title}</p>
                   <p><strong>Description:</strong> {generatedEvent.description}</p>
                   <p><strong>Category:</strong> {generatedEvent.category}</p>
@@ -244,35 +258,35 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
                 <button
                   onClick={handleGenerateImage}
                   disabled={isGeneratingImage}
-                  className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white py-2 px-4 rounded-lg"
+                  className="w-full bg-gradient-to-r from-[#8fef70] to-[#131549] text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isGeneratingImage ? '🎨 Generating image...' : '🎨 Generate Representative Image'}
+                  {isGeneratingImage ? 'Generating image...' : 'Generate Representative Image'}
                 </button>
               )}
 
               {generatedImage && (
                 <div className="space-y-4">
-                  <div className="bg-gray-700 rounded-lg p-4">
-                    <h4 className="text-lg font-semibold mb-2">🖼️ Generated Image</h4>
+                  <div className="bg-white/5 rounded-xl p-6 border border-[#8fef70]/30">
+                    <h4 className="text-lg font-bold text-[#8fef70] mb-4">Generated Image</h4>
                     <img
                       src={generatedImage}
                       alt="Generated prediction"
-                      className="w-full h-64 object-cover rounded-lg"
+                      className="w-full h-64 object-cover rounded-xl"
                     />
                   </div>
 
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-3">
                     <button
                       onClick={handlePublishAndBet}
-                      className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg"
+                      className="flex-1 bg-gradient-to-r from-[#8fef70] to-[#131549] text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
                     >
-                      🎯 Bet and Publish
+                      Bet and Publish
                     </button>
                     <button
                       onClick={handlePublishOnly}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg"
+                      className="flex-1 bg-white/10 text-white py-3 px-6 rounded-xl font-semibold border border-[#8fef70]/30 hover:bg-[#8fef70]/20 transition-all duration-300"
                     >
-                      📢 Publish Only
+                      Publish Only
                     </button>
                   </div>
                 </div>
@@ -285,8 +299,8 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
 
         {/* Input Area */}
         {currentStep === 'chat' && (
-          <div className="p-4 border-t border-gray-700">
-            <div className="flex space-x-2">
+          <div className="p-6 border-t border-[#8fef70]/30">
+            <div className="flex space-x-3">
               <input
                 ref={inputRef}
                 type="text"
@@ -294,13 +308,13 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Write your prediction in natural language..."
-                className="flex-1 bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 bg-white/10 text-white px-4 py-3 rounded-xl border border-[#8fef70]/30 focus:outline-none focus:ring-2 focus:ring-[#8fef70] focus:border-transparent placeholder-gray-400"
                 disabled={isLoading}
               />
               <button
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading}
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white px-6 py-2 rounded-lg"
+                className="bg-gradient-to-r from-[#8fef70] to-[#131549] text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Send
               </button>
