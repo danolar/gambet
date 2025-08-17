@@ -1,11 +1,21 @@
 import { useState } from 'react';
 import { AIAgentChat } from '../features/ai/AIAgentChat';
 import { useVisions } from '../hooks/useVisions';
+import { useWallet } from '../features/wallet/useWallet';
 import type { AIGeneratedBettingEvent } from '../features/ai/openaiService';
 
 export function FloatingAIAgent() {
   const [isOpen, setIsOpen] = useState(false);
   const { createVision } = useVisions();
+  const { isConnected, address } = useWallet();
+
+  const handleOpenAI = () => {
+    if (!isConnected) {
+      alert('Please connect your wallet first to use the AI Agent');
+      return;
+    }
+    setIsOpen(true);
+  };
 
   const handleBettingEventCreated = async (event: AIGeneratedBettingEvent & { imageUrl: string }) => {
     try {
@@ -17,8 +27,8 @@ export function FloatingAIAgent() {
         description: event.description,
         category: event.category,
         odds: event.initialOdds,
-        image_url: event.imageUrl,
-        creator_address: 'AI Generated', // You can change this to actual user address
+        image_url: event.imageUrl, // Backend will convert to base64
+        creator_address: address || 'Unknown Wallet', // Use actual wallet address
         network: 'Chiliz'
       };
 
@@ -43,9 +53,14 @@ export function FloatingAIAgent() {
       {/* Floating Button */}
       <div className="fixed bottom-6 right-6 z-50">
         <button
-          onClick={() => setIsOpen(true)}
-          className="group relative bg-gradient-to-r from-[#8fef70] to-[#131549] text-white px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center space-x-3"
+          onClick={handleOpenAI}
+          className={`group relative px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center space-x-3 ${
+            isConnected 
+              ? 'bg-gradient-to-r from-[#8fef70] to-[#131549] text-white' 
+              : 'bg-gray-500 text-gray-300 cursor-not-allowed'
+          }`}
           aria-label="Open AI Agent"
+          disabled={!isConnected}
         >
           {/* Main Icon */}
           <div className="w-6 h-6 flex items-center justify-center">
@@ -55,7 +70,9 @@ export function FloatingAIAgent() {
           </div>
           
           {/* Text */}
-          <span className="text-white font-semibold text-lg">Wanna Bet?</span>
+          <span className="font-semibold text-lg">
+            {isConnected ? 'Wanna Bet?' : 'Connect Wallet First'}
+          </span>
         </button>
       </div>
 
@@ -64,6 +81,8 @@ export function FloatingAIAgent() {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onBettingEventCreated={handleBettingEventCreated}
+        walletAddress={address}
+        isWalletConnected={isConnected}
       />
     </>
   );

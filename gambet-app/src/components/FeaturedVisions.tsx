@@ -1,10 +1,12 @@
 import { useVisions } from '../hooks/useVisions';
+import { useWallet } from '../features/wallet/useWallet';
 import type { Vision } from '../services/api';
 import { BetModal } from './BetModal';
 import { useState } from 'react';
 
 export function FeaturedVisions() {
   const { visions, loading, error } = useVisions();
+  const { isConnected } = useWallet();
   const [selectedVision, setSelectedVision] = useState<Vision | null>(null);
   const [isBetModalOpen, setIsBetModalOpen] = useState(false);
 
@@ -183,6 +185,10 @@ export function FeaturedVisions() {
   const displayVisions = visions.length > 0 ? visions : fallbackVisions;
 
   const handleBetNow = (vision: Vision) => {
+    if (!isConnected) {
+      alert('Please connect your wallet first to place a bet');
+      return;
+    }
     setSelectedVision(vision);
     setIsBetModalOpen(true);
   };
@@ -213,7 +219,7 @@ export function FeaturedVisions() {
               {/* Image */}
               <div className="relative h-56 overflow-hidden">
                 <img 
-                  src={vision.image_url || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center"} 
+                  src={vision.image_data || vision.image_url || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center"} 
                   alt={vision.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -255,10 +261,15 @@ export function FeaturedVisions() {
                 <button 
                   type="button"
                   onClick={() => handleBetNow(vision)}
-                  className="w-full bg-gradient-to-r from-[#8fef70] to-[#131549] text-white py-3 px-6 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(143,239,112,0.4)] hover:scale-105 transform group-hover:shadow-[0_0_25px_rgba(143,239,112,0.5)] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#8fef70] focus:ring-opacity-50 active:scale-95 relative z-10"
-                  style={{ cursor: 'pointer' }}
+                  disabled={!isConnected}
+                  className={`w-full py-3 px-6 rounded-lg font-semibold text-lg transition-all duration-300 relative z-10 ${
+                    isConnected
+                      ? 'bg-gradient-to-r from-[#8fef70] to-[#131549] text-white hover:shadow-[0_0_20px_rgba(143,239,112,0.4)] hover:scale-105 transform group-hover:shadow-[0_0_25px_rgba(143,239,112,0.5)] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#8fef70] focus:ring-opacity-50 active:scale-95'
+                      : 'bg-gray-500 text-gray-300 cursor-not-allowed opacity-50'
+                  }`}
+                  style={{ cursor: isConnected ? 'pointer' : 'not-allowed' }}
                 >
-                  Bet Now
+                  {isConnected ? 'Bet Now' : 'Connect Wallet to Bet'}
                 </button>
               </div>
               

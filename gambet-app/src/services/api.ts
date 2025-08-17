@@ -7,6 +7,7 @@ export interface Vision {
   category: string;
   odds?: number;
   image_url?: string;
+  image_data?: string;
   creator_address?: string;
   network?: string;
   status: string;
@@ -20,6 +21,7 @@ export interface CreateVisionData {
   category: string;
   odds?: number;
   image_url?: string;
+  image_data?: string;
   creator_address?: string;
   network?: string;
 }

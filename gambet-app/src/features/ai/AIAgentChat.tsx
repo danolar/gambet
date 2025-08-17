@@ -6,12 +6,16 @@ interface AIAgentChatProps {
   isOpen: boolean;
   onClose: () => void;
   onBettingEventCreated: (event: AIGeneratedBettingEvent & { imageUrl: string }) => void;
+  walletAddress: string | null;
+  isWalletConnected: boolean;
 }
 
 export const AIAgentChat: React.FC<AIAgentChatProps> = ({
   isOpen,
   onClose,
   onBettingEventCreated,
+  walletAddress,
+  isWalletConnected,
 }) => {
   const [messages, setMessages] = useState<AIChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -175,6 +179,14 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
                   </div>
                   <p className="text-lg font-semibold mb-2">Welcome to Gambet Vision!</p>
                   <p className="text-[#8fef70] mb-4">I'm your AI assistant for creating predictions.</p>
+                  {isWalletConnected && walletAddress && (
+                    <div className="mb-4 p-3 bg-[#8fef70]/10 border border-[#8fef70]/30 rounded-lg">
+                      <p className="text-sm text-[#8fef70] mb-1">Connected Wallet:</p>
+                      <p className="text-xs text-white font-mono">
+                        {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                      </p>
+                    </div>
+                  )}
                   <p className="text-sm text-gray-300 mb-2">
                     Tell me what you want to bet on in natural language, for example:
                   </p>

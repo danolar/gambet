@@ -79,11 +79,29 @@ export const visionController = {
         });
       }
 
+      // Convert image URL to base64 if image_data is not provided
+      let finalVisionData = { ...visionData };
+      
+      if (visionData.image_url && !visionData.image_data) {
+        try {
+          const imageResponse = await fetch(visionData.image_url);
+          if (imageResponse.ok) {
+            const buffer = await imageResponse.arrayBuffer();
+            const base64 = Buffer.from(buffer).toString('base64');
+            const mimeType = imageResponse.headers.get('content-type') || 'image/png';
+            finalVisionData.image_data = `data:${mimeType};base64,${base64}`;
+          }
+        } catch (imageError) {
+          console.warn('Warning: Could not convert image to base64:', imageError);
+          // Continue without base64 conversion
+        }
+      }
+
       // Set default values
       const visionToCreate = {
-        ...visionData,
-        creator_address: visionData.creator_address || 'Anonymous',
-        network: visionData.network || 'Chiliz',
+        ...finalVisionData,
+        creator_address: finalVisionData.creator_address || 'Anonymous',
+        network: finalVisionData.network || 'Chiliz',
         status: 'active'
       };
 
