@@ -14,7 +14,7 @@ export function HeroSection() {
           <div className="flex justify-center space-x-8">
             <div className="flex-shrink-0">
               <img 
-                src="/gambet_banner.png" 
+                src="/gambet_banner2.png" 
                 alt="Gambet Banner 1" 
                 className="w-auto h-80 object-contain"
               />
@@ -28,7 +28,7 @@ export function HeroSection() {
             </div>
             <div className="flex-shrink-0">
               <img 
-                src="/gambet_banner.png" 
+                src="/gambet_banner3.png" 
                 alt="Gambet Banner 3" 
                 className="w-auto h-80 object-contain"
               />

@@ -1,8 +1,12 @@
 import { useVisions } from '../hooks/useVisions';
 import type { Vision } from '../services/api';
+import { BetModal } from './BetModal';
+import { useState } from 'react';
 
 export function FeaturedVisions() {
   const { visions, loading, error } = useVisions();
+  const [selectedVision, setSelectedVision] = useState<Vision | null>(null);
+  const [isBetModalOpen, setIsBetModalOpen] = useState(false);
 
   if (loading) {
     return (
@@ -178,6 +182,16 @@ export function FeaturedVisions() {
 
   const displayVisions = visions.length > 0 ? visions : fallbackVisions;
 
+  const handleBetNow = (vision: Vision) => {
+    setSelectedVision(vision);
+    setIsBetModalOpen(true);
+  };
+
+  const closeBetModal = () => {
+    setIsBetModalOpen(false);
+    setSelectedVision(null);
+  };
+
   return (
     <section className="py-16 px-6">
       <div className="max-w-7xl mx-auto">
@@ -193,41 +207,41 @@ export function FeaturedVisions() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
           {displayVisions.map((vision) => (
             <div key={vision.id} className="group relative overflow-hidden rounded-xl border border-border/50 bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-neon">
               {/* Image */}
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-56 overflow-hidden">
                 <img 
                   src={vision.image_url || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center"} 
                   alt={vision.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute top-3 right-3">
-                  <div className="bg-[#8fef70] text-[#131549] px-2 py-1 rounded-full text-sm font-bold">
+                  <div className="bg-[#8fef70] text-[#131549] px-3 py-2 rounded-full text-sm font-bold shadow-lg">
                     {vision.odds}x
                   </div>
                 </div>
                 <div className="absolute bottom-3 left-3">
-                  <span className="text-xs text-white bg-black/50 px-2 py-1 rounded-full">
+                  <span className="text-xs text-white bg-black/50 px-3 py-2 rounded-full backdrop-blur-sm">
                     {vision.category}
                   </span>
                 </div>
               </div>
               
-              <div className="p-4">
-                <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2">
                   {vision.title}
                 </h3>
                 
-                <p className="text-muted-foreground mb-4 text-sm line-clamp-2">
+                <p className="text-muted-foreground mb-6 text-sm line-clamp-3">
                   {vision.description}
                 </p>
                 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center">
-                      <span className="text-xs font-bold text-primary">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold text-primary">
                         {vision.creator_address?.charAt(0) || "A"}
                       </span>
                     </div>
@@ -236,13 +250,33 @@ export function FeaturedVisions() {
                     </span>
                   </div>
                 </div>
+
+                {/* Bet Now Button - Llamativo */}
+                <button 
+                  type="button"
+                  onClick={() => handleBetNow(vision)}
+                  className="w-full bg-gradient-to-r from-[#8fef70] to-[#131549] text-white py-3 px-6 rounded-lg font-semibold text-lg transition-all duration-300 hover:shadow-[0_0_20px_rgba(143,239,112,0.4)] hover:scale-105 transform group-hover:shadow-[0_0_25px_rgba(143,239,112,0.5)] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#8fef70] focus:ring-opacity-50 active:scale-95 relative z-10"
+                  style={{ cursor: 'pointer' }}
+                >
+                  Bet Now
+                </button>
               </div>
               
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              {/* Overlay moved to only cover the image area */}
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ bottom: '200px' }} />
             </div>
           ))}
         </div>
       </div>
+
+      {/* Bet Modal */}
+      {isBetModalOpen && selectedVision && (
+        <BetModal
+          isOpen={isBetModalOpen}
+          onClose={closeBetModal}
+          vision={selectedVision}
+        />
+      )}
     </section>
   );
 }
