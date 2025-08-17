@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {PredictionNFT} from "./PredictionNFT.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Gambet is Ownable {
     // NFT Contract
