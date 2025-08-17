@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@openzeppelin/*": ["lib/openzeppelin-contracts/*"],
+      "forge-std/*": ["lib/forge-std/src/*"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "script/**/*",
+    "test/**/*"
+  ]
+}
