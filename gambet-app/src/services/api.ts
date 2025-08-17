@@ -1,6 +1,21 @@
-import { ENV_CONFIG } from '../config/env';
+import { getEnvironmentConfig } from '../config/environments';
 
-const API_BASE_URL = ENV_CONFIG.API_BASE_URL;
+// Usar la configuración de entornos en lugar de ENV_CONFIG
+const envConfig = getEnvironmentConfig();
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || envConfig.apiBaseUrl;
+
+// Debug log para ver qué URL se está usando
+console.log('🔗 API Configuration:', {
+  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  envConfig: envConfig.apiBaseUrl,
+  finalUrl: API_BASE_URL,
+  envName: envConfig.environment
+});
+
+// Verificar que la URL sea válida
+if (!API_BASE_URL.startsWith('http')) {
+  console.error('❌ ERROR: API_BASE_URL no comienza con http:', API_BASE_URL);
+}
 
 export interface Vision {
   id: number;
@@ -43,6 +58,9 @@ class ApiService {
   ): Promise<ApiResponse<T>> {
     const url = `${API_BASE_URL}${endpoint}`;
     
+    // Debug log para ver la URL completa
+    console.log('🌐 Making API request to:', url);
+    
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
@@ -62,6 +80,7 @@ class ApiService {
       return data;
     } catch (error) {
       console.error('API request failed:', error);
+      console.error('Failed URL:', url);
       throw error;
     }
   }

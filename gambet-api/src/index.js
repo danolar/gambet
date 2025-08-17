@@ -35,7 +35,9 @@ app.use(cors({
     ? [
         process.env.ALLOWED_ORIGINS?.split(',') || [],
         'https://gambet.danolar.xyz', // Tu dominio actual
+        'http://gambet.danolar.xyz', // También permitir HTTP temporalmente
         'https://www.gambet.danolar.xyz', // Con www también
+        'http://www.gambet.danolar.xyz', // También permitir HTTP temporalmente
         'http://localhost:5173', // Para desarrollo local
         'http://localhost:5174' // Puerto alternativo de desarrollo
       ].filter(Boolean)

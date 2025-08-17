@@ -5,13 +5,8 @@ export const ENVIRONMENTS = {
     corsOrigin: 'http://localhost:5173',
     environment: 'development'
   },
-  staging: {
-    apiBaseUrl: 'https://sv1_gambet.danolar.xyz/api',
-    corsOrigin: 'https://staging.gambet.danolar.xyz',
-    environment: 'staging'
-  },
   production: {
-    apiBaseUrl: 'https://sv1_gambet.danolar.xyz/api', // URL correcta de la API
+    apiBaseUrl: 'http://sv1_gambet.danolar.xyz/api', // Usar HTTP temporalmente
     corsOrigin: 'https://gambet.danolar.xyz',
     environment: 'production'
   }
@@ -19,8 +14,8 @@ export const ENVIRONMENTS = {
 
 // Obtener el entorno actual
 export const getCurrentEnvironment = () => {
-  const env = import.meta.env.VITE_APP_ENVIRONMENT || 'development';
-  return ENVIRONMENTS[env as keyof typeof ENVIRONMENTS] || ENVIRONMENTS.development;
+  const env = import.meta.env.VITE_APP_ENVIRONMENT || 'production'; // Cambiar a production por defecto
+  return ENVIRONMENTS[env as keyof typeof ENVIRONMENTS] || ENVIRONMENTS.production;
 };
 
 // Configuración dinámica basada en el entorno
