@@ -30,14 +30,11 @@ function App() {
           <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
             <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z"/>
-                  </svg>
-                </div>
-                <span className="text-2xl font-bold text-gradient-primary">
-                  Gambet
-                </span>
+                <img 
+                  src="/gambet_logo.svg" 
+                  alt="Gambet Logo" 
+                  className="h-8 w-auto"
+                />
               </div>
               
               <div className="hidden md:flex items-center space-x-6">
@@ -76,21 +73,16 @@ function App() {
 
           {/* Footer */}
           <footer className="border-t border-border/50 py-8 px-6">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex flex-col md:flex-row items-center justify-between">
-                <div className="flex items-center space-x-2 mb-4 md:mb-0">
-                  <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 12a2 2 0 114 0 2 2 0 01-4 0z"/>
-                    </svg>
-                  </div>
-                  <span className="text-2xl font-bold text-gradient-primary">
-                    Gambet
-                  </span>
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Built on Chiliz Chain • Powered by OpenAI
-                </div>
+            <div className="max-w-7xl mx-auto text-center">
+              <div className="mb-4">
+                <img 
+                  src="/gambet_logo.svg" 
+                  alt="Gambet Logo" 
+                  className="h-12 w-auto mx-auto"
+                />
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Built on Chiliz Chain • Powered by OpenAI
               </div>
             </div>
           </footer>

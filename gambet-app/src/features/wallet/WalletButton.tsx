@@ -21,18 +21,18 @@ export const WalletButton: React.FC = () => {
     return (
       <div className="flex items-center space-x-3">
         <div className="text-right">
-          <div className="text-sm text-gray-300">
+          <div className="text-sm text-[#8fef70] font-medium">
             {balanceFormatted} {currencySymbol}
           </div>
-          <div className="text-xs text-gray-400">
+          <div className="text-xs text-white/70">
             {formatAddress(address || '')}
           </div>
         </div>
         <button
           onClick={disconnect}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+          className="bg-[#131549] hover:bg-[#131549]/80 text-white px-4 py-2 rounded-lg text-sm transition-all duration-300 border border-[#8fef70]/30 hover:border-[#8fef70]/50 hover:shadow-[0_0_20px_rgba(143,239,112,0.3)]"
         >
-          Desconectar
+          Disconnect
         </button>
       </div>
     );
@@ -43,9 +43,9 @@ export const WalletButton: React.FC = () => {
       <button
         onClick={connect}
         disabled={isConnecting}
-        className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+        className="group relative bg-gradient-to-r from-[#8fef70] to-[#131549] text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-[0_0_20px_rgba(143,239,112,0.3)] transition-all duration-300 hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isConnecting ? 'Conectando...' : '🔗 Conectar Wallet'}
+        {isConnecting ? 'Connecting...' : 'Connect Wallet'}
       </button>
       
       {error && (
