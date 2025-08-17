@@ -7,13 +7,9 @@ import type { AIGeneratedBettingEvent } from '../features/ai/openaiService';
 export function FloatingAIAgent() {
   const [isOpen, setIsOpen] = useState(false);
   const { createVision } = useVisions();
-  const { isConnected, address } = useWallet();
+  const { address } = useWallet();
 
   const handleOpenAI = () => {
-    if (!isConnected) {
-      alert('Please connect your wallet first to use the AI Agent');
-      return;
-    }
     setIsOpen(true);
   };
 
@@ -28,7 +24,7 @@ export function FloatingAIAgent() {
         category: event.category,
         odds: event.initialOdds,
         image_url: event.imageUrl, // Backend will convert to base64
-        creator_address: address || 'Unknown Wallet', // Use actual wallet address
+        creator_address: address || 'AI Generated', // Use actual wallet address if available
         network: 'Chiliz'
       };
 
@@ -54,13 +50,8 @@ export function FloatingAIAgent() {
       <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={handleOpenAI}
-          className={`group relative px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center space-x-3 ${
-            isConnected 
-              ? 'bg-gradient-to-r from-[#8fef70] to-[#131549] text-white' 
-              : 'bg-gray-500 text-gray-300 cursor-not-allowed'
-          }`}
+          className="group relative px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center space-x-3 bg-gradient-to-r from-[#8fef70] to-[#131549] text-white"
           aria-label="Open AI Agent"
-          disabled={!isConnected}
         >
           {/* Main Icon */}
           <div className="w-6 h-6 flex items-center justify-center">
@@ -71,7 +62,7 @@ export function FloatingAIAgent() {
           
           {/* Text */}
           <span className="font-semibold text-lg">
-            {isConnected ? 'Wanna Bet?' : 'Connect Wallet First'}
+            Wanna Bet?
           </span>
         </button>
       </div>
@@ -82,7 +73,6 @@ export function FloatingAIAgent() {
         onClose={() => setIsOpen(false)}
         onBettingEventCreated={handleBettingEventCreated}
         walletAddress={address}
-        isWalletConnected={isConnected}
       />
     </>
   );

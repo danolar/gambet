@@ -7,7 +7,6 @@ interface AIAgentChatProps {
   onClose: () => void;
   onBettingEventCreated: (event: AIGeneratedBettingEvent & { imageUrl: string }) => void;
   walletAddress: string | null;
-  isWalletConnected: boolean;
 }
 
 export const AIAgentChat: React.FC<AIAgentChatProps> = ({
@@ -15,7 +14,6 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
   onClose,
   onBettingEventCreated,
   walletAddress,
-  isWalletConnected,
 }) => {
   const [messages, setMessages] = useState<AIChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -102,65 +100,50 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
 
     try {
       setIsGeneratingImage(true);
-      const imageUrl = await OpenAIService.generateImage(generatedEvent.imagePrompt);
+      const imageUrl = await OpenAIService.generateImage(generatedEvent.title);
       setGeneratedImage(imageUrl);
     } catch (error) {
       console.error('Error generating image:', error);
+      alert('Error generating image. Please try again.');
     } finally {
       setIsGeneratingImage(false);
     }
   };
 
-  const handlePublishAndBet = () => {
-    if (generatedEvent && generatedImage) {
-      onBettingEventCreated({
-        ...generatedEvent,
-        imageUrl: generatedImage,
-      });
-      onClose();
-      resetChat();
-    }
+  const handlePublishBet = () => {
+    if (!generatedEvent || !generatedImage) return;
+
+    const eventWithImage = {
+      ...generatedEvent,
+      imageUrl: generatedImage,
+    };
+
+    onBettingEventCreated(eventWithImage);
   };
 
-  const handlePublishOnly = () => {
-    if (generatedEvent && generatedImage) {
-      onBettingEventCreated({
-        ...generatedEvent,
-        imageUrl: generatedImage,
-      });
-      onClose();
-      resetChat();
-    }
-  };
-
-  const resetChat = () => {
+  const handleReset = () => {
     setMessages([]);
+    setInputMessage('');
     setCurrentStep('chat');
     setGeneratedEvent(null);
+    setGeneratedImage('');
     setGeneratedImage('');
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#131549] rounded-2xl w-full max-w-2xl h-[600px] flex flex-col border-2 border-[#8fef70]/30 shadow-2xl">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-[#1a1a2e] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-[#8fef70]/30">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[#8fef70]/30 bg-gradient-to-r from-[#8fef70]/10 to-[#131549]">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-[#8fef70] to-[#131549] rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold text-white">AI Agent - Gambet Vision</h3>
-          </div>
+        <div className="flex items-center justify-between p-6 border-b border-[#8fef70]/20">
+          <h2 className="text-2xl font-bold text-white">AI Betting Assistant</h2>
           <button
             onClick={onClose}
-            className="text-[#8fef70] hover:text-white transition-colors p-2 rounded-lg hover:bg-[#8fef70]/20"
+            className="text-white/70 hover:text-white transition-colors"
           >
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
@@ -179,7 +162,7 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
                   </div>
                   <p className="text-lg font-semibold mb-2">Welcome to Gambet Vision!</p>
                   <p className="text-[#8fef70] mb-4">I'm your AI assistant for creating predictions.</p>
-                  {isWalletConnected && walletAddress && (
+                  {walletAddress && (
                     <div className="mb-4 p-3 bg-[#8fef70]/10 border border-[#8fef70]/30 rounded-lg">
                       <p className="text-sm text-[#8fef70] mb-1">Connected Wallet:</p>
                       <p className="text-xs text-white font-mono">
@@ -289,16 +272,16 @@ export const AIAgentChat: React.FC<AIAgentChatProps> = ({
 
                   <div className="flex space-x-3">
                     <button
-                      onClick={handlePublishAndBet}
+                      onClick={handlePublishBet}
                       className="flex-1 bg-gradient-to-r from-[#8fef70] to-[#131549] text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
                     >
                       Publish and Bet
                     </button>
                     <button
-                      onClick={handlePublishOnly}
+                      onClick={handleReset}
                       className="flex-1 bg-white/10 text-white py-3 px-6 rounded-xl font-semibold border border-[#8fef70]/30 hover:bg-[#8fef70]/20 transition-all duration-300"
                     >
-                      Stake and Publish
+                      Reset
                     </button>
                   </div>
                 </div>
