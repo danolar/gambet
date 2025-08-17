@@ -3,11 +3,8 @@ pragma solidity ^0.8.20;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
-
 contract PredictionNFT is ERC721, Ownable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIdCounter;
+    uint256 private _tokenIdCounter;
 
     struct PredictionMetadata {
         uint256 betId;
@@ -25,8 +22,8 @@ contract PredictionNFT is ERC721, Ownable {
         uint256 _outcomeIndex,
         uint256 _amount
     ) public onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        uint256 tokenId = _tokenIdCounter;
+        _tokenIdCounter++;
         _safeMint(to, tokenId);
         getPredictionMetadata[tokenId] = PredictionMetadata({
             betId: _betId,
